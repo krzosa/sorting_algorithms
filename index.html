@@ -4,15 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="main.js"></script>
+    <script src="main.js" defer></script>
 </head>
 <style>
+    *{
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
     body{
-        background-color: black;
+        background-color: #333333;
     }
 </style>
 <body>
-    <canvas class="graph">
+    <canvas id="graph">
         <p>Your browser doesn't support canvas.</p>
     </canvas>
 
