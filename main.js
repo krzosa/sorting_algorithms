@@ -1,21 +1,24 @@
 class SortRenderer{
     constructor(){
-        this.canvas = document.getElementById('graph')
-        this.width = this.canvas.width = 800
-        this.height = this.canvas.height = 600
-        this.context = this.canvas.getContext('2d')
-
+        /* Settings */
         this.barSize = 5
         this.animationSpeed = 5
         this.barColor = '#333333'
-        this.bgColor = 'rgb(100,100,100)'
+        this.currentBarColor = '#c94f2a'
+        this.bgColor = '#666666'
         this.barWidth = 10
         this.barGap = 0.5
         this.toSortListSize = 50
-        this.toSortListMaxValue = 100
+        this.toSortListMaxValue = 150
+        
         this.toSortlist = []
+        this.canvas = document.getElementById('graph')
+        this.context = this.canvas.getContext('2d')
+        this.width = this.canvas.width = this.toSortListSize*(this.barWidth+this.barGap)
+        this.height = this.canvas.height = this.barSize*this.toSortListMaxValue
     }
 
+    /* utility functions */
     clearCanvas(){
         this.context.fillStyle = this.bgColor
         this.context.fillRect(0,0,this.width,this.height)
@@ -28,6 +31,29 @@ class SortRenderer{
         return numbers
     }
 
+    drawNumberBar(num, pos, color){
+        pos = (pos*(this.barWidth+this.barGap))
+        this.context.fillStyle = color;
+        this.context.fillRect(pos, this.height, this.barWidth, this.barSize*-num)          
+    }
+    
+    drawList(){
+        let nums = this.toSortlist
+        for(let i = 0; i<nums.length; i++)
+        this.drawNumberBar(nums[i], i, this.barColor)
+    }
+
+    drawCurrentBars(nums, i){
+        this.drawNumberBar(nums[i], i, this.currentBarColor)
+        this.drawNumberBar(nums[i-1], i-1, this.currentBarColor)
+    }
+    
+    render(){
+        this.toSortlist = this.generateListRand(this.toSortListSize)
+        this.bubbleSort()
+    }
+
+    /* Sorting algorithms */
     bubbleSort(){
         let nums = this.toSortlist
         for(let i = 0; i<nums.length-1; i++)
@@ -41,28 +67,15 @@ class SortRenderer{
                     nums[j+1] = temp
                 }
                 this.clearCanvas()
-                this.drawNumberList(nums, j)
+                this.drawList()
+                if(i!=nums.length-2 && j!=nums.length-2)
+                    this.drawCurrentBars(nums, j)
             }, this.animationSpeed*j)
             }
-        }, i*this.animationSpeed*nums.length)
+        }, i*this.animationSpeed*nums.length)  
     }
     
-    drawNumberBar(num, pos){
-        pos = (pos*(this.barWidth+this.barGap))
-        this.context.fillStyle = this.barColor;
-        this.context.fillRect(pos, this.barSize*100+20, this.barWidth, this.barSize*-num)          
-    }
-    
-    drawNumberList(nums, j){
-        for(let i = 0; i<nums.length; i++)
-        this.drawNumberBar(nums[i], i, this.barColor)
-    }
-    
-    renderSort(){
-        this.toSortlist = this.generateListRand(this.toSortListSize)
-        this.bubbleSort()
-    }
 }
 
 const a = new SortRenderer()
-a.renderSort()
+a.render()
