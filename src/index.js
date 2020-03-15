@@ -95,9 +95,7 @@ class SortRenderer{
             nums[i] = nums[minIndex]
             nums[minIndex] = temp
             }, this.animationSpeed*i)
-        }
-        console.log(nums);
-        
+        } 
     }
     
 }
