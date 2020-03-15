@@ -2,9 +2,9 @@ class SortRenderer{
     constructor(){
         /* Settings */
         this.barSize = 5
-        this.animationSpeed = 5
+        this.animationSpeed = 100
         this.barColor = '#333333'
-        this.currentBarColor = '#c94f2a'
+        this.currentBarColor = '#c12c54'
         this.bgColor = '#666666'
         this.barWidth = 10
         this.barGap = 0.5
@@ -45,12 +45,12 @@ class SortRenderer{
 
     drawCurrentBars(nums, i){
         this.drawNumberBar(nums[i], i, this.currentBarColor)
-        this.drawNumberBar(nums[i-1], i-1, this.currentBarColor)
+        this.drawNumberBar(nums[i+1], i+1, this.currentBarColor)
     }
     
     render(){
         this.toSortlist = this.generateListRand(this.toSortListSize)
-        this.bubbleSort()
+        this.selectionSort()
     }
 
     /* Sorting algorithms */
@@ -70,9 +70,34 @@ class SortRenderer{
                 this.drawList()
                 if(i!=nums.length-2 && j!=nums.length-2)
                     this.drawCurrentBars(nums, j)
-            }, this.animationSpeed*j)
+            }, this.animationSpeed * j)
             }
         }, i*this.animationSpeed*nums.length)  
+    }
+
+    selectionSort(){
+        let nums = this.toSortlist
+        let minIndex = 0
+        let temp = 0
+        for(let i = 0; i<nums.length;i++){
+            setTimeout(() => {
+            minIndex = i
+            for(let j = i+1; j<nums.length;j++){
+                if(nums[minIndex] > nums[j])
+                    minIndex = j
+                
+                this.clearCanvas()
+                this.drawList()
+            }
+            
+            // swap elements
+            temp = nums[i]
+            nums[i] = nums[minIndex]
+            nums[minIndex] = temp
+            }, this.animationSpeed*i)
+        }
+        console.log(nums);
+        
     }
     
 }
