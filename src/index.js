@@ -24,38 +24,36 @@ class SortRenderer{
         this.context.fillRect(0,0,this.width,this.height)
     }
     
-    generateListRand(){
+    generateListRand(size, maxValue){
         let numbers = []
-        for(let i = 0;i<this.toSortListSize;i++)
-            numbers.push(Math.floor(Math.random()*this.toSortListMaxValue))
+        for(let i = 0;i<size;i++)
+            numbers.push(Math.floor(Math.random()*maxValue))
         return numbers
     }
 
-    drawNumberBar(num, pos, color){
+    drawNumberBar(num, pos, color = '#333333'){
         pos = (pos*(this.barWidth+this.barGap))
         this.context.fillStyle = color;
         this.context.fillRect(pos, this.height, this.barWidth, this.barSize*-num)          
     }
     
-    drawList(){
-        let nums = this.toSortlist
+    drawList(nums, barColor = '#333333'){
         for(let i = 0; i<nums.length; i++)
-        this.drawNumberBar(nums[i], i, this.barColor)
+            this.drawNumberBar(nums[i], i, barColor)
     }
 
-    drawCurrentBars(nums, i){
-        this.drawNumberBar(nums[i], i, this.currentBarColor)
-        this.drawNumberBar(nums[i+1], i+1, this.currentBarColor)
+    drawCurrentBars(nums, i, j, color = '#c12c54'){
+        this.drawNumberBar(nums[i], i, color)
+        this.drawNumberBar(nums[j], j, color)
     }
     
     render(){
-        this.toSortlist = this.generateListRand(this.toSortListSize)
-        this.selectionSort()
+        this.toSortlist = this.generateListRand(this.toSortListSize, this.toSortListMaxValue)
+        this.selectionSort(this.toSortlist)
     }
 
     /* Sorting algorithms */
-    bubbleSort(){
-        let nums = this.toSortlist
+    bubbleSort(nums){
         for(let i = 0; i<nums.length-1; i++)
         setTimeout(() => {
             for(let j = 0;j<nums.length-1;j++){
@@ -67,16 +65,14 @@ class SortRenderer{
                     nums[j+1] = temp
                 }
                 this.clearCanvas()
-                this.drawList()
-                if(i!=nums.length-2 && j!=nums.length-2)
-                    this.drawCurrentBars(nums, j)
+                this.drawList(nums)
+                this.drawCurrentBars(nums, j)
             }, this.animationSpeed * j)
             }
         }, i*this.animationSpeed*nums.length)  
     }
 
-    selectionSort(){
-        let nums = this.toSortlist
+    selectionSort(nums){
         let minIndex = 0
         let temp = 0
         for(let i = 0; i<nums.length;i++){
@@ -87,7 +83,8 @@ class SortRenderer{
                     minIndex = j
                 
                 this.clearCanvas()
-                this.drawList()
+                this.drawList(nums)
+                this.drawCurrentBars(nums, i, minIndex)
             }
             
             // swap elements
@@ -95,6 +92,12 @@ class SortRenderer{
             nums[i] = nums[minIndex]
             nums[minIndex] = temp
             }, this.animationSpeed*i)
+
+            // to render sorted list properly at the end, clear colored bars
+            setTimeout(() => {
+                this.clearCanvas()
+                this.drawList()
+            },this.animationSpeed*nums.length)
         } 
     }
     
