@@ -119,61 +119,61 @@ var SortRenderer = /*#__PURE__*/function () {
 
   _createClass(SortRenderer, [{
     key: "clearCanvas",
-    value: function clearCanvas() {
-      this.context.fillStyle = this.bgColor;
-      this.context.fillRect(0, 0, this.width, this.height);
+    value: function clearCanvas(bgColor, width, height) {
+      this.context.fillStyle = bgColor;
+      this.context.fillRect(0, 0, width, height);
     }
   }, {
     key: "generateListRand",
-    value: function generateListRand() {
+    value: function generateListRand(size, maxValue) {
       var numbers = [];
 
-      for (var i = 0; i < this.toSortListSize; i++) {
-        numbers.push(Math.floor(Math.random() * this.toSortListMaxValue));
+      for (var i = 0; i < size; i++) {
+        numbers.push(Math.floor(Math.random() * maxValue));
       }
 
       return numbers;
     }
   }, {
     key: "drawNumberBar",
-    value: function drawNumberBar(num, pos, color) {
-      pos = pos * (this.barWidth + this.barGap);
+    value: function drawNumberBar(num, x, y, width, height, gap) {
+      var color = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : '#333333';
+      x = x * (width + gap);
       this.context.fillStyle = color;
-      this.context.fillRect(pos, this.height, this.barWidth, this.barSize * -num);
+      this.context.fillRect(x, y, width, height * -num);
     }
   }, {
     key: "drawList",
-    value: function drawList() {
-      var nums = this.toSortlist;
+    value: function drawList(nums, width, height, gap) {
+      var color = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '#333333';
 
       for (var i = 0; i < nums.length; i++) {
-        this.drawNumberBar(nums[i], i, this.barColor);
+        this.drawNumberBar(nums[i], i, width, height, gap, color);
       }
     }
   }, {
     key: "drawCurrentBars",
-    value: function drawCurrentBars(nums, i) {
-      this.drawNumberBar(nums[i], i, this.currentBarColor);
-      this.drawNumberBar(nums[i + 1], i + 1, this.currentBarColor);
+    value: function drawCurrentBars(nums, x1, x2, y, width, height, gap) {
+      var color = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : '#c12c54';
+      this.drawNumberBar(nums[x1], x1, y, width, height, gap, color);
+      this.drawNumberBar(nums[x2], x2, y, width, height, gap, color);
     }
   }, {
     key: "render",
     value: function render() {
-      this.toSortlist = this.generateListRand(this.toSortListSize);
-      this.selectionSort();
+      this.toSortlist = this.generateListRand(this.toSortListSize, this.toSortListMaxValue);
+      this.bubbleSort(this.toSortlist);
     }
     /* Sorting algorithms */
 
   }, {
     key: "bubbleSort",
-    value: function bubbleSort() {
+    value: function bubbleSort(nums) {
       var _this = this;
 
-      var nums = this.toSortlist;
-
-      var _loop = function _loop(i) {
+      for (var i = 0; i < nums.length - 1; i++) {
         setTimeout(function () {
-          var _loop2 = function _loop2(j) {
+          var _loop = function _loop(j) {
             setTimeout(function () {
               if (nums[j + 1] < nums[j]) {
                 // swap elements
@@ -182,54 +182,57 @@ var SortRenderer = /*#__PURE__*/function () {
                 nums[j + 1] = temp;
               }
 
-              _this.clearCanvas();
+              _this.clearCanvas(_this.bgColor, _this.width, _this.height);
 
-              _this.drawList();
+              _this.drawList(nums, _this.height, _this.barWidth, _this.barSize, _this.barGap, _this.barColor);
 
-              if (i != nums.length - 2 && j != nums.length - 2) _this.drawCurrentBars(nums, j);
+              _this.drawCurrentBars(nums, j, j + 1, _this.height, _this.barWidth, _this.barSize, _this.barGap, _this.currentBarColor);
             }, _this.animationSpeed * j);
           };
 
           for (var j = 0; j < nums.length - 1; j++) {
-            _loop2(j);
+            _loop(j);
           }
-        }, i * _this.animationSpeed * nums.length);
-      };
-
-      for (var i = 0; i < nums.length - 1; i++) {
-        _loop(i);
+        }, i * this.animationSpeed * nums.length);
       }
     }
   }, {
     key: "selectionSort",
-    value: function selectionSort() {
+    value: function selectionSort(nums) {
       var _this2 = this;
 
-      var nums = this.toSortlist;
       var minIndex = 0;
       var temp = 0;
 
-      var _loop3 = function _loop3(i) {
+      var _loop2 = function _loop2(i) {
         setTimeout(function () {
           minIndex = i;
 
           for (var j = i + 1; j < nums.length; j++) {
             if (nums[minIndex] > nums[j]) minIndex = j;
 
-            _this2.clearCanvas();
+            _this2.clearCanvas(_this2.bgColor, _this2.width, _this2.height);
 
-            _this2.drawList();
+            _this2.drawList(nums, _this2.height, _this2.barWidth, _this2.barSize, _this2.barGap, _this2.barColor);
+
+            _this2.drawCurrentBars(nums, i, minIndex, _this2.height, _this2.barWidth, _this2.barSize, _this2.barGap, _this2.currentBarColor);
           } // swap elements
 
 
           temp = nums[i];
           nums[i] = nums[minIndex];
           nums[minIndex] = temp;
-        }, _this2.animationSpeed * i);
+        }, _this2.animationSpeed * i); // to render sorted list properly at the end, clear colored bars
+
+        setTimeout(function () {
+          _this2.clearCanvas(_this2.bgColor, _this2.width, _this2.height);
+
+          _this2.drawList(nums, _this2.height, _this2.barWidth, _this2.barSize, _this2.barGap, _this2.barColor);
+        }, _this2.animationSpeed * nums.length);
       };
 
       for (var i = 0; i < nums.length; i++) {
-        _loop3(i);
+        _loop2(i);
       }
     }
   }]);

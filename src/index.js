@@ -19,9 +19,9 @@ class SortRenderer{
     }
 
     /* utility functions */
-    clearCanvas(){
-        this.context.fillStyle = this.bgColor
-        this.context.fillRect(0,0,this.width,this.height)
+    clearCanvas(bgColor, width, height){
+        this.context.fillStyle = bgColor
+        this.context.fillRect(0,0,width,height)
     }
     
     generateListRand(size, maxValue){
@@ -31,25 +31,25 @@ class SortRenderer{
         return numbers
     }
 
-    drawNumberBar(num, pos, color = '#333333'){
-        pos = (pos*(this.barWidth+this.barGap))
+    drawNumberBar(num, x, y, width, height, gap, color = '#333333'){
+        x = (x*(width+gap))
         this.context.fillStyle = color;
-        this.context.fillRect(pos, this.height, this.barWidth, this.barSize*-num)          
+        this.context.fillRect(x, y, width, height*-num)          
     }
     
-    drawList(nums, barColor = '#333333'){
+    drawList(nums, width, height, gap, color = '#333333'){
         for(let i = 0; i<nums.length; i++)
-            this.drawNumberBar(nums[i], i, barColor)
+            this.drawNumberBar(nums[i], i, width, height, gap, color)
     }
 
-    drawCurrentBars(nums, i, j, color = '#c12c54'){
-        this.drawNumberBar(nums[i], i, color)
-        this.drawNumberBar(nums[j], j, color)
+    drawCurrentBars(nums, x1, x2, y, width, height, gap, color = '#c12c54'){
+        this.drawNumberBar(nums[x1], x1, y, width, height, gap, color)
+        this.drawNumberBar(nums[x2], x2, y, width, height, gap, color)
     }
     
     render(){
         this.toSortlist = this.generateListRand(this.toSortListSize, this.toSortListMaxValue)
-        this.selectionSort(this.toSortlist)
+        this.bubbleSort(this.toSortlist)
     }
 
     /* Sorting algorithms */
@@ -64,9 +64,9 @@ class SortRenderer{
                     nums[j] = nums[j+1]
                     nums[j+1] = temp
                 }
-                this.clearCanvas()
-                this.drawList(nums)
-                this.drawCurrentBars(nums, j)
+                this.clearCanvas(this.bgColor, this.width, this.height)
+                this.drawList(nums, this.height, this.barWidth, this.barSize, this.barGap, this.barColor)
+                this.drawCurrentBars(nums, j,j+1, this.height, this.barWidth, this.barSize, this.barGap, this.currentBarColor)
             }, this.animationSpeed * j)
             }
         }, i*this.animationSpeed*nums.length)  
@@ -82,9 +82,9 @@ class SortRenderer{
                 if(nums[minIndex] > nums[j])
                     minIndex = j
                 
-                this.clearCanvas()
-                this.drawList(nums)
-                this.drawCurrentBars(nums, i, minIndex)
+                this.clearCanvas(this.bgColor, this.width, this.height)
+                this.drawList(nums, this.height, this.barWidth, this.barSize, this.barGap, this.barColor)
+                this.drawCurrentBars(nums, i, minIndex, this.height, this.barWidth, this.barSize, this.barGap, this.currentBarColor)
             }
             
             // swap elements
@@ -95,8 +95,8 @@ class SortRenderer{
 
             // to render sorted list properly at the end, clear colored bars
             setTimeout(() => {
-                this.clearCanvas()
-                this.drawList()
+                this.clearCanvas(this.bgColor, this.width, this.height)
+                this.drawList(nums, this.height, this.barWidth, this.barSize, this.barGap, this.barColor)
             },this.animationSpeed*nums.length)
         } 
     }
