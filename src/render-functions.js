@@ -1,14 +1,40 @@
-export function clearCanvas(context, bgColor, width, height){
-    context.fillStyle = bgColor
-    context.fillRect(0,0,width,height)
+/* WRAPPERS */
+
+export function clear(config){
+    clearCanvas(config.context, config.width, 
+                config.height, config.bgColor)
 }
 
-export function generateListRand(size, maxValue){
+export function draw(nums, config){
+    drawList(config.context, nums, 
+        config.height, config.barWidth, 
+        config.barHeight, config.barGap, 
+        config.barColor)
+    }
+
+export function drawSelected(nums, i, j, config){
+    drawCurrentBars(config.context, nums, i, j, 
+        config.height, config.barWidth, 
+        config.barHeight, config.barGap, 
+        config.currentBarColor)
+}
+
+/* UTILS */
+
+export function generateList(size, maxValue){
     let numbers = []
     for(let i = 0;i<size;i++)
         numbers.push(Math.floor(Math.random()*maxValue))
     return numbers
 }
+
+/* LOWER LEVEL FUNCTIONS */
+
+export function clearCanvas(context, width, height, bgColor){
+    context.fillStyle = bgColor
+    context.fillRect(0,0,width,height)
+}
+
 
 export function drawNumberBar(context, num, 
                               x, y, width, height, 
